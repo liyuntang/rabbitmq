@@ -1,7 +1,6 @@
 package rabbitmq
 
 import (
-	"fmt"
 	"github.com/streadway/amqp"
 )
 
@@ -11,31 +10,32 @@ type RabbitMQ struct {
 	exchange string
 }
 
-func New(endPoint string) *RabbitMQ {
-	conn, err := amqp.Dial(endPoint)
-	if err != nil {
-		fmt.Println("连接rabbitmq失败,err is", err)
-		panic(err)
+func New(s string) *RabbitMQ {
+	conn, e := amqp.Dial(s)
+	if e != nil {
+		panic(e)
 	}
-	ch, err := conn.Channel()
-	if err != nil {
-		panic(err)
+	ch, e := conn.Channel()
+	if e != nil {
+		panic(e)
 	}
-
-	q, err := ch.QueueDeclare(
+	q, e := ch.QueueDeclare(
 		"",
 		false,
 		true,
 		false,
 		false,
-		nil,
-		)
-	if err != nil {
-		panic(err)
-	}
+		nil,)
 
+	if e != nil {
+		panic(e)
+	}
 	mq := new(RabbitMQ)
 	mq.channel = ch
 	mq.Name = q.Name
 	return mq
+}
+
+func (q *RabbitMQ)Close()  {
+	q.channel.Close()
 }

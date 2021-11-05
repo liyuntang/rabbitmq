@@ -5,14 +5,13 @@ import (
 	"github.com/streadway/amqp"
 )
 
-func (q *RabbitMQ)Send(queue string, body interface{})  {
+func (q *RabbitMQ)Publish(exchange string, body interface{})  {
 	str, e := json.Marshal(body)
 	if e != nil {
 		panic(e)
 	}
-
-	e = q.channel.Publish("",
-		queue,
+	e = q.channel.Publish(exchange,
+		"",
 		false,
 		false,
 		amqp.Publishing{
@@ -20,6 +19,6 @@ func (q *RabbitMQ)Send(queue string, body interface{})  {
 		Body: []byte(str),
 		})
 	if e != nil {
-		panic(e)
+		panic(nil)
 	}
 }
